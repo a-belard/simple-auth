@@ -1,11 +1,24 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Button } from "react-native";
+import LoginScreen from "./modules/Login/Login.screen";
+import { useEffect, useState } from "react";
+import { ProtectedScreen } from "./modules/todo/Protected.screen";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function App() {
+  const [token, setToken] = useState(null);
+
+  const handleLogout = async () => {
+    await AsyncStorage.removeItem("token");
+    setToken(null);
+  };
   return (
     <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
+      {token ? (
+        <ProtectedScreen token={token} />
+      ) : (
+        <LoginScreen setToken={setToken} />
+      )}
+      {token && <Button title="Logout" onPress={handleLogout} />}
     </View>
   );
 }
@@ -13,8 +26,8 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
